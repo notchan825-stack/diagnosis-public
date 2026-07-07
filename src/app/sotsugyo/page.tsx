@@ -254,7 +254,7 @@ export default function SotsugyoPage() {
         )}
 
         <footer className="mt-10 text-center text-xs text-slate-400">
-          小野崎記子コンサルティング
+          2026 © ひとり社長卒業診断
         </footer>
       </div>
     </main>
