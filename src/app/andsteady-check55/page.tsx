@@ -56,7 +56,7 @@ function Check55Inner() {
             alt="andsteady"
             width={180}
             height={40}
-            className="mx-auto mb-4 h-8 w-auto"
+            className="mx-auto mb-4 h-6 w-auto"
             priority
           />
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
@@ -122,10 +122,10 @@ function Check55Inner() {
             </section>
 
             <section className="mb-6 rounded-2xl border border-[#1C2848]/10 bg-white p-6 text-center shadow-sm">
-              <p className="mb-2 text-sm leading-relaxed text-[#1C2848]/70">
-                足に合う靴と、正しい歩き方を身につけることで、
+              <p className="mb-2 text-sm leading-relaxed text-[#1C2848]">
+                足に合う靴に履き替え、正しい歩き方に修正することで、
                 <br />
-                多くのお悩みは根本から変わっていきます。
+                足もとだけでない不定愁訴が解消することも多いのです。
               </p>
               <a
                 href="https://andsteady.com/reservation"
@@ -134,7 +134,6 @@ function Check55Inner() {
                 className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-[#aa2f2f] px-8 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-[0.99]"
               >
                 ご予約はこちら
-                <ArrowRight className="h-4 w-4" />
               </a>
             </section>
 
