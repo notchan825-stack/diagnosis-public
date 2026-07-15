@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { ArrowRight, RotateCcw } from "lucide-react";
 import { QUESTIONS, type Category } from "./questions";
 import { diagnose, type DiagnosisResult } from "./scoring";
@@ -46,21 +47,26 @@ function Check55Inner() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F1E2D3] text-[#1C2848]">
+    <main className="min-h-screen bg-white text-[#1C2848]">
       <div className="mx-auto max-w-xl px-4 py-8 sm:py-12">
         {/* ヘッダー */}
         <header className="mb-8 text-center">
-          <p className="mb-2 text-xs font-semibold tracking-widest text-[#aa2f2f]">
-            andsteady｜くつ・あし・あるく研究所
-          </p>
+          <Image
+            src="/andsteady-logo.png"
+            alt="andsteady"
+            width={180}
+            height={40}
+            className="mx-auto mb-4 h-8 w-auto"
+            priority
+          />
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
             くつ・あし・あるく黄金チェック55診断
           </h1>
           {!result && (
-            <p className="text-sm leading-relaxed text-[#1C2848]/70">
-              当てはまるものに、すべてチェックしてください。
+            <p className="text-sm leading-relaxed text-[#1C2848]">
+              足に合う靴に履き替え、正しい歩き方に修正することで、
               <br />
-              チェックし終えたら、下のボタンで結果を見られます。
+              足もとだけでない不定愁訴が解消することも多いのです。
             </p>
           )}
         </header>
