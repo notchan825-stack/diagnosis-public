@@ -76,7 +76,7 @@ export async function sendDiagnosisResultEmail(to: string, resultText: string) {
                 くつ・あし・あるく研究所アンド・ステディ<br />
                 <a href="mailto:info@andsteady.com" style="color:rgba(28,40,72,0.6);">info@andsteady.com</a><br />
                 <a href="https://www.instagram.com/andsteady/" style="color:rgba(28,40,72,0.6);">Instagram</a><br />
-                <a href="https://www.youtube.com/channel/UCYMNYND3Zc1r-Y5fCgDPXNg" style="color:rgba(28,40,72,0.6);">YouTube</a>
+                <a href="https://www.youtube.com/@andsteadytokyo" style="color:rgba(28,40,72,0.6);">YouTube</a>
               </td>
             </tr>
 
