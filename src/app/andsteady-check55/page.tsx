@@ -136,7 +136,7 @@ function Check55Inner() {
               <p className="mb-2 text-sm leading-relaxed text-[#1C2848]">
                 足に合う靴に履き替え、正しい歩き方に修正することで、
                 <br />
-                足もとだけでない不定愁訴が解消することも多いのです。
+                足もとだけでない不定愁訴が解消することも多くあります。
               </p>
               <a
                 href="https://andsteady.com/reservation"

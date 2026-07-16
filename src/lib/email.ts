@@ -1,6 +1,10 @@
 import { Resend } from "resend";
 
 const FROM = process.env.EMAIL_FROM ?? "andsteady <info@andsteady.com>";
+const LOGO_URL = "https://diagnosis-public.vercel.app/andsteady-logo.png";
+const RESERVATION_URL = "https://andsteady.com/reservation";
+const NAVY = "#1C2848";
+const RED = "#aa2f2f";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -22,10 +26,66 @@ export async function sendDiagnosisResultEmail(to: string, resultText: string) {
   if (!resend) throw new Error("RESEND_API_KEY is not configured");
 
   const html = `
-    <div style="font-family: sans-serif; color: #1C2848; max-width: 480px; margin: 0 auto;">
-      <p style="font-size: 14px; font-weight: bold; color: #aa2f2f;">あなたへの診断結果</p>
-      <p style="font-size: 15px; line-height: 1.8; white-space: pre-wrap;">${escapeHtml(resultText)}</p>
-    </div>
+<!doctype html>
+<html lang="ja">
+  <body style="margin:0; padding:0; background-color:#f4f4f5; font-family: -apple-system, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5; padding: 32px 16px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px; width:100%;">
+
+            <tr>
+              <td align="center" style="padding-bottom: 24px;">
+                <img src="${LOGO_URL}" alt="andsteady" width="150" style="display:block;" />
+              </td>
+            </tr>
+
+            <tr>
+              <td align="center" style="padding-bottom: 24px;">
+                <h1 style="margin:0; font-size:20px; font-weight:bold; color:${NAVY}; line-height:1.5;">
+                  くつ・あし・あるく黄金チェック55診断
+                </h1>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="background-color:#ffffff; border:1px solid rgba(28,40,72,0.1); border-radius:16px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                <p style="margin:0 0 12px 0; font-size:14px; font-weight:bold; color:${RED};">あなたへの診断結果</p>
+                <p style="margin:0; font-size:15px; line-height:1.8; color:${NAVY}; white-space:pre-wrap;">${escapeHtml(resultText)}</p>
+              </td>
+            </tr>
+
+            <tr><td style="height:16px;"></td></tr>
+
+            <tr>
+              <td align="center" style="background-color:#ffffff; border:1px solid rgba(28,40,72,0.1); border-radius:16px; padding:24px; box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+                <p style="margin:0 0 16px 0; font-size:14px; line-height:1.8; color:${NAVY};">
+                  足に合う靴に履き替え、正しい歩き方に修正することで、<br />
+                  足もとだけでない不定愁訴が解消することも多くあります。
+                </p>
+                <a href="${RESERVATION_URL}" style="display:inline-block; background-color:${RED}; color:#ffffff; font-size:14px; font-weight:bold; text-decoration:none; padding:14px 32px; border-radius:999px;">
+                  ご予約はこちら
+                </a>
+              </td>
+            </tr>
+
+            <tr><td style="height:32px;"></td></tr>
+
+            <tr>
+              <td align="center" style="font-size:12px; line-height:1.8; color:rgba(28,40,72,0.6);">
+                くつ・あし・あるく研究所アンド・ステディ<br />
+                <a href="mailto:info@andsteady.com" style="color:rgba(28,40,72,0.6);">info@andsteady.com</a><br />
+                <a href="https://www.instagram.com/andsteady/" style="color:rgba(28,40,72,0.6);">Instagram</a><br />
+                <a href="https://www.youtube.com/channel/UCYMNYND3Zc1r-Y5fCgDPXNg" style="color:rgba(28,40,72,0.6);">YouTube</a>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
   `;
 
   return resend.emails.send({
