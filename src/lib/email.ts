@@ -8,6 +8,15 @@ function getResend() {
   return new Resend(key);
 }
 
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 export async function sendDiagnosisResultEmail(to: string, resultText: string) {
   const resend = getResend();
   if (!resend) throw new Error("RESEND_API_KEY is not configured");
@@ -15,7 +24,7 @@ export async function sendDiagnosisResultEmail(to: string, resultText: string) {
   const html = `
     <div style="font-family: sans-serif; color: #1C2848; max-width: 480px; margin: 0 auto;">
       <p style="font-size: 14px; font-weight: bold; color: #aa2f2f;">あなたへの診断結果</p>
-      <p style="font-size: 15px; line-height: 1.8; white-space: pre-wrap;">${resultText}</p>
+      <p style="font-size: 15px; line-height: 1.8; white-space: pre-wrap;">${escapeHtml(resultText)}</p>
     </div>
   `;
 

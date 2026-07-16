@@ -44,7 +44,7 @@ function Check55Inner() {
       fetch("/api/send-diagnosis-result", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, resultText: diagnosis.text }),
+        body: JSON.stringify({ email, checkedIds: Array.from(checked) }),
       }).catch((err) => console.error("diagnosis result email failed", err));
     }
   };
