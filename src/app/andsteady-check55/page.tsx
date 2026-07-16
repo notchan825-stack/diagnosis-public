@@ -36,8 +36,17 @@ function Check55Inner() {
   const count = checked.size;
 
   const handleSubmit = () => {
-    setResult(diagnose(checked));
+    const diagnosis = diagnose(checked);
+    setResult(diagnosis);
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+
+    if (email) {
+      fetch("/api/send-diagnosis-result", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, resultText: diagnosis.text }),
+      }).catch((err) => console.error("diagnosis result email failed", err));
+    }
   };
 
   const handleReset = () => {
