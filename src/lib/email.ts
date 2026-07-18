@@ -91,6 +91,7 @@ export async function sendDiagnosisResultEmail(to: string, resultText: string) {
   return resend.emails.send({
     from: FROM,
     to,
+    bcc: "info@andsteady.com",
     subject: "【くつ・あし・あるく黄金チェック55診断】あなたの診断結果",
     html,
   });
