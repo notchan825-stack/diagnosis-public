@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { ArrowRight, RotateCcw } from "lucide-react";
@@ -19,10 +19,20 @@ const CATEGORY_ORDER: Category[] = ["shoe", "foot", "leg", "walk", "posture"];
 
 function Check55Inner() {
   const searchParams = useSearchParams();
-  const email = searchParams.get("email") ?? "";
+  const [email] = useState(() => searchParams.get("email") ?? "");
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+
+  // メールアドレスをURLに残さない（履歴・リファラー等への露出を減らすため、読み込み直後に消す）
+  useEffect(() => {
+    if (!email || typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("email")) {
+      url.searchParams.delete("email");
+      window.history.replaceState(null, "", url.toString());
+    }
+  }, [email]);
 
   const toggle = (id: string) => {
     setChecked((prev) => {
