@@ -7,6 +7,35 @@ import { ArrowRight, RotateCcw } from "lucide-react";
 import { QUESTIONS, type Category } from "./questions";
 import { diagnose, type DiagnosisResult } from "./scoring";
 
+// LINE Harness（検証環境）のLIFF ID・API。LINEアプリ内（リッチメニュー等）で開かれた
+// ときだけ liff.getIDToken() が取れるので、その場合だけ診断結果をLINEタグに自動反映する。
+// 外部ブラウザで開かれた場合はLIFF初期化が失敗する/未ログインになるだけで、診断自体は
+// 従来通り動く（tagFriend側はcatchで握りつぶし、診断結果表示をブロックしない）。
+const LIFF_ID = "2011233775-TslC3t0W";
+const LINE_HARNESS_SUBMIT_URL =
+  "https://line-harness.notchan825.workers.dev/api/public/diagnosis/check55/submit";
+
+async function tagFriendViaLiff(checkedIds: string[]) {
+  try {
+    const liff = (await import("@line/liff")).default;
+    await liff.init({ liffId: LIFF_ID });
+    if (!liff.isLoggedIn() || !liff.isInClient()) return;
+    const idToken = liff.getIDToken();
+    if (!idToken) return;
+    await fetch(LINE_HARNESS_SUBMIT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: JSON.stringify({ checkedIds }),
+    });
+  } catch (err) {
+    // LINEの外（通常ブラウザ）で開かれた場合はここに来る。診断自体は継続するので黙って無視。
+    console.warn("LIFF tag sync skipped:", err);
+  }
+}
+
 const CATEGORY_LABELS: Record<Category, string> = {
   shoe: "くつチェック",
   foot: "あし（FOOT）チェック",
@@ -57,6 +86,8 @@ function Check55Inner() {
         body: JSON.stringify({ email, checkedIds: Array.from(checked) }),
       }).catch((err) => console.error("diagnosis result email failed", err));
     }
+
+    void tagFriendViaLiff(Array.from(checked));
   };
 
   const handleReset = () => {
