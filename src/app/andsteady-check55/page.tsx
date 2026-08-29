@@ -15,13 +15,15 @@ const LIFF_ID = "2011233775-TslC3t0W";
 const LINE_HARNESS_SUBMIT_URL =
   "https://line-harness.notchan825.workers.dev/api/public/diagnosis/check55/submit";
 
-async function tagFriendViaLiff(checkedIds: string[]) {
+// LINEの中（LIFF）で開かれたかどうかを返す。true のときだけ実際にタグ付けも行う。
+// この戻り値は、結果画面の出口CTAをLINE経由/メール経由で出し分けるのにも使う。
+async function tagFriendViaLiff(checkedIds: string[]): Promise<boolean> {
   try {
     const liff = (await import("@line/liff")).default;
     await liff.init({ liffId: LIFF_ID });
-    if (!liff.isLoggedIn() || !liff.isInClient()) return;
+    if (!liff.isLoggedIn() || !liff.isInClient()) return false;
     const idToken = liff.getIDToken();
-    if (!idToken) return;
+    if (!idToken) return false;
     await fetch(LINE_HARNESS_SUBMIT_URL, {
       method: "POST",
       headers: {
@@ -30,9 +32,11 @@ async function tagFriendViaLiff(checkedIds: string[]) {
       },
       body: JSON.stringify({ checkedIds }),
     });
+    return true;
   } catch (err) {
     // LINEの外（通常ブラウザ）で開かれた場合はここに来る。診断自体は継続するので黙って無視。
     console.warn("LIFF tag sync skipped:", err);
+    return false;
   }
 }
 
@@ -52,6 +56,8 @@ function Check55Inner() {
 
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [result, setResult] = useState<DiagnosisResult | null>(null);
+  // null = 判定中、true = LINE(LIFF)経由、false = メール講座経由/通常ブラウザ
+  const [isLineOrigin, setIsLineOrigin] = useState<boolean | null>(null);
 
   // メールアドレスをURLに残さない（履歴・リファラー等への露出を減らすため、読み込み直後に消す）
   useEffect(() => {
@@ -87,7 +93,7 @@ function Check55Inner() {
       }).catch((err) => console.error("diagnosis result email failed", err));
     }
 
-    void tagFriendViaLiff(Array.from(checked));
+    tagFriendViaLiff(Array.from(checked)).then(setIsLineOrigin);
   };
 
   const handleReset = () => {
@@ -173,21 +179,43 @@ function Check55Inner() {
               </p>
             </section>
 
-            <section className="mb-6 rounded-2xl border border-[#1C2848]/10 bg-white p-6 text-center shadow-sm">
-              <p className="mb-2 text-sm leading-relaxed text-[#1C2848]">
-                足に合う靴に履き替え、正しい歩き方に修正することで、
-                <br />
-                足もとだけでない不定愁訴が解消することも多くあります。
-              </p>
-              <a
-                href="https://andsteady.com/reservation"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-[#aa2f2f] px-8 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-[0.99]"
-              >
-                ご予約はこちら
-              </a>
-            </section>
+            {isLineOrigin !== null && (
+              <section className="mb-6 rounded-2xl border border-[#1C2848]/10 bg-white p-6 text-center shadow-sm">
+                {isLineOrigin ? (
+                  <>
+                    <p className="mb-2 text-sm leading-relaxed text-[#1C2848]">
+                      無料メール講座に登録すると、あなたのお悩みに合わせて、
+                      <br />
+                      さらに詳しい足もとケアをお届けします。
+                    </p>
+                    <a
+                      href="https://andsteady.com/mailseminar/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-[#aa2f2f] px-8 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-[0.99]"
+                    >
+                      無料メール講座に登録する
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <p className="mb-2 text-sm leading-relaxed text-[#1C2848]">
+                      足に合う靴に履き替え、正しい歩き方に修正することで、
+                      <br />
+                      足もとだけでない不定愁訴が解消することも多くあります。
+                    </p>
+                    <a
+                      href="https://andsteady.com/reservation"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center justify-center gap-2 rounded-full bg-[#aa2f2f] px-8 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-[0.99]"
+                    >
+                      ご予約はこちら
+                    </a>
+                  </>
+                )}
+              </section>
+            )}
 
             <button
               onClick={handleReset}
