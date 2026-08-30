@@ -14,6 +14,38 @@ function getSheetsClient() {
   return google.sheets({ version: "v4", auth });
 }
 
+export interface DiagnosisRow {
+  submittedAt: string;
+  email: string;
+  checkedLabels: string;
+  resultSummary: string;
+}
+
+// 診断結果を記録したシートを丸ごと読み出す。オートビズ等へのメルマガリスト
+// 取り込み用（管理者専用エンドポイントからのみ呼ばれる想定）。
+export async function getDiagnosisRows(): Promise<DiagnosisRow[]> {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: "A:D",
+  });
+
+  const rows = res.data.values ?? [];
+  return rows
+    .map((row) => ({
+      submittedAt: row[0] ?? "",
+      email: row[1] ?? "",
+      checkedLabels: row[2] ?? "",
+      resultSummary: row[3] ?? "",
+    }))
+    // ヘッダー行や空行を除外（emailが実在の形式のものだけ残す）
+    .filter((r) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email));
+}
+
 export async function appendDiagnosisRow(
   email: string,
   checkedLabels: string[],
