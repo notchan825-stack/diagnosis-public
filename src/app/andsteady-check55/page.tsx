@@ -11,7 +11,14 @@ import { diagnose, type DiagnosisResult } from "./scoring";
 // ときだけ liff.getIDToken() が取れるので、その場合だけ診断結果をLINEタグに自動反映する。
 // 外部ブラウザで開かれた場合はLIFF初期化が失敗する/未ログインになるだけで、診断自体は
 // 従来通り動く（tagFriend側はcatchで握りつぶし、診断結果表示をブロックしない）。
-const LIFF_ID = "2011233775-TslC3t0W";
+//
+// 2026-08-30: 旧ID（2011233775-TslC3t0W）はkanriの予約ログイン画面（kanri.andsteady.com）
+// と共有しており、エンドポイントURLがandsteady.com側を向いていたため診断ページ
+// （diagnosis-public.vercel.app、別ドメイン）ではIDトークンが取得できなかった
+// （実機テストでタグ0件・原因判明）。診断ページ専用に新規発行したLIFF ID
+// （check55-shindan、エンドポイントURL=diagnosis-public.vercel.app/andsteady-check55）
+// に差し替え。kanri側の旧IDには一切手を入れていない。
+const LIFF_ID = "2011233775-Af5JXf7C";
 const LINE_HARNESS_SUBMIT_URL =
   "https://line-harness.notchan825.workers.dev/api/public/diagnosis/check55/submit";
 
