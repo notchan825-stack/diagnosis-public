@@ -20,7 +20,7 @@ export const QUESTIONS: Question[] = [
   { id: 'shoe-10', label: '足裏の中央が痛くなる', category: 'shoe' },
   { id: 'shoe-11', label: '踵が靴擦れを起こす', category: 'shoe' },
   { id: 'shoe-12', label: '甲が痛くなる', category: 'shoe' },
-  { id: 'shoe-13', label: 'すねの外が痛くなる', category: 'shoe' },
+  { id: 'shoe-13', label: '常にバッグにバンドエイド', category: 'shoe' },
   { id: 'shoe-14', label: '靴にはマイインソールを必ず入れる', category: 'shoe' },
   // ■あし（FOOT）チェック（11項目）
   { id: 'foot-01', label: '開張足・開帳足', category: 'foot' },
@@ -44,7 +44,7 @@ export const QUESTIONS: Question[] = [
   { id: 'leg-07', label: 'O脚', category: 'leg' },
   { id: 'leg-08', label: 'XO脚', category: 'leg' },
   { id: 'leg-09', label: 'X脚', category: 'leg' },
-  { id: 'leg-10', label: '膝下が外側に変形している', category: 'leg' },
+  { id: 'leg-10', label: '太ももの前に筋肉がつく', category: 'leg' },
   // ■あるくチェック（15項目）
   { id: 'walk-01', label: '歩くとすぐに疲れる', category: 'walk' },
   { id: 'walk-02', label: '歩くと足が痛くなる', category: 'walk' },
