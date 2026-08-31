@@ -11,7 +11,7 @@ export interface DiagnosisResult {
 const GAIHANBOSHI_IDS = new Set(['shoe-08', 'foot-06'])
 const TAKO_IDS = new Set(['foot-10'])
 const GAISOKU_IDS = new Set([
-  'shoe-09', 'foot-07', 'leg-07', 'leg-08', 'leg-09',
+  'shoe-09', 'shoe-13', 'foot-07', 'leg-07', 'leg-08', 'leg-09', 'leg-10',
 ])
 const KOSHITSU_ONLY_ID = 'foot-11' // 腰痛・膝痛・肩こり
 
