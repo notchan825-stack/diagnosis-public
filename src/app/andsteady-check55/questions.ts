@@ -20,8 +20,8 @@ export const QUESTIONS: Question[] = [
   { id: 'shoe-10', label: '足裏の中央が痛くなる', category: 'shoe' },
   { id: 'shoe-11', label: '踵が靴擦れを起こす', category: 'shoe' },
   { id: 'shoe-12', label: '甲が痛くなる', category: 'shoe' },
-  { id: 'shoe-13', label: 'すねの外が痛くなる', category: 'shoe' },
-  { id: 'shoe-14', label: '特に問題を感じない', category: 'shoe' },
+  { id: 'shoe-13', label: '常にバッグにバンドエイド', category: 'shoe' },
+  { id: 'shoe-14', label: '靴にはマイインソールを必ず入れる', category: 'shoe' },
   // ■あし（FOOT）チェック（11項目）
   { id: 'foot-01', label: '開張足・開帳足', category: 'foot' },
   { id: 'foot-02', label: '偏平足・扁平足', category: 'foot' },
