@@ -44,8 +44,7 @@ export const QUESTIONS: Question[] = [
   { id: 'leg-07', label: 'O脚', category: 'leg' },
   { id: 'leg-08', label: 'XO脚', category: 'leg' },
   { id: 'leg-09', label: 'X脚', category: 'leg' },
-  { id: 'leg-10', label: '内また', category: 'leg' },
-  { id: 'leg-11', label: '太ももの前に筋肉がつく', category: 'leg' },
+  { id: 'leg-10', label: '太ももの前に筋肉がつく', category: 'leg' },
   // ■あるくチェック（15項目）
   { id: 'walk-01', label: '歩くとすぐに疲れる', category: 'walk' },
   { id: 'walk-02', label: '歩くと足が痛くなる', category: 'walk' },
@@ -62,9 +61,10 @@ export const QUESTIONS: Question[] = [
   { id: 'walk-13', label: '歩くとドタドタ音がうるさい', category: 'walk' },
   { id: 'walk-14', label: '左右に揺れる', category: 'walk' },
   { id: 'walk-15', label: '泥はねする', category: 'walk' },
-  // ■姿勢チェック（4項目）
-  { id: 'posture-01', label: '重心の置き場所に悩む', category: 'posture' },
-  { id: 'posture-02', label: '立つと踵と踵が離れている', category: 'posture' },
-  { id: 'posture-03', label: '猫背', category: 'posture' },
-  { id: 'posture-04', label: '反り腰', category: 'posture' },
+  // ■姿勢チェック（5項目）
+  { id: 'posture-01', label: '内また', category: 'posture' },
+  { id: 'posture-02', label: '猫背', category: 'posture' },
+  { id: 'posture-03', label: '反り腰', category: 'posture' },
+  { id: 'posture-04', label: '重心の置き場所に悩む', category: 'posture' },
+  { id: 'posture-05', label: '立つと踵と踵が離れている', category: 'posture' },
 ]
