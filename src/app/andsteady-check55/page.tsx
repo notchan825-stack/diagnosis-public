@@ -18,9 +18,16 @@ import { diagnose, type DiagnosisResult } from "./scoring";
 // （実機テストでタグ0件・原因判明）。診断ページ専用に新規発行したLIFF ID
 // （check55-shindan、エンドポイントURL=diagnosis-public.vercel.app/andsteady-check55）
 // に差し替え。kanri側の旧IDには一切手を入れていない。
-const LIFF_ID = "2011233775-Af5JXf7C";
+// 2026-09-02: LINE Harness本番切替の際にここが更新漏れになっていた（検証用
+// 「アンド・ステディtest」のLIFF IDのまま残っていた）ため、本番用に修正。
+const LIFF_ID = "2007097335-ufllmmf0";
 const LINE_HARNESS_SUBMIT_URL =
   "https://line-harness.notchan825.workers.dev/api/public/diagnosis/check55/submit";
+// メール講座リンク経由（LIFF外・通常ブラウザ）で診断した場合の回答一時保存先。
+// 後日、同じメールアドレスでkanriの予約ページにLINE経由でログインした瞬間に
+// まとめてタグ反映される（2026-09-02追加）。
+const LINE_HARNESS_PENDING_URL =
+  "https://line-harness.notchan825.workers.dev/api/public/diagnosis/check55/pending";
 
 // LINEの中（LIFF）で開かれたかどうかを返す。true のときだけ実際にタグ付けも行う。
 // この戻り値は、結果画面の出口CTAをLINE経由/メール経由で出し分けるのにも使う。
@@ -44,6 +51,21 @@ async function tagFriendViaLiff(checkedIds: string[]): Promise<boolean> {
     // LINEの外（通常ブラウザ）で開かれた場合はここに来る。診断自体は継続するので黙って無視。
     console.warn("LIFF tag sync skipped:", err);
     return false;
+  }
+}
+
+// LIFF経由でタグ付けできなかった場合のフォールバック。メールアドレスをキーに
+// 回答だけ保存しておき、後日その人がLINE経由でkanriにログインした瞬間に
+// まとめてタグ反映される（2026-09-02追加）。失敗しても診断結果表示はブロックしない。
+async function savePendingDiagnosis(email: string, checkedIds: string[]): Promise<void> {
+  try {
+    await fetch(LINE_HARNESS_PENDING_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, checkedIds }),
+    });
+  } catch (err) {
+    console.warn("pending diagnosis save skipped:", err);
   }
 }
 
@@ -100,7 +122,12 @@ function Check55Inner() {
       }).catch((err) => console.error("diagnosis result email failed", err));
     }
 
-    tagFriendViaLiff(Array.from(checked)).then(setIsLineOrigin);
+    tagFriendViaLiff(Array.from(checked)).then((viaLine) => {
+      setIsLineOrigin(viaLine);
+      if (!viaLine && email) {
+        savePendingDiagnosis(email, Array.from(checked));
+      }
+    });
   };
 
   const handleReset = () => {
