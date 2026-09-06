@@ -163,6 +163,32 @@ export default function SotsugyoPage() {
                 </button>
               </form>
             </section>
+
+            {/* メール登録なしでも進める入口（診断結果だけがメール登録の対価） */}
+            <section className="mb-6 text-center">
+              <p className="mb-3 text-xs text-slate-400">
+                メールアドレスの入力なしでも、こちらからご覧いただけます
+              </p>
+              <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
+                <a
+                  href={SEMINAR_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-amber-500 px-5 py-2 text-sm font-bold text-amber-700 hover:bg-amber-50"
+                >
+                  セミナーの詳細を見る
+                </a>
+                <a
+                  href={CTA_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
+                >
+                  個別相談について見てみる
+                </a>
+              </div>
+            </section>
+
             <button
               onClick={() => {
                 setDone(false);
