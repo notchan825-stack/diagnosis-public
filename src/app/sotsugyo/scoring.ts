@@ -89,6 +89,32 @@ export function tier(count: number): Tier {
   };
 }
 
+const CATEGORY_ADVICE: Record<string, string> = {
+  事業の現状:
+    "売上や商品構成が「なんとなく」で決まっている状態は、頑張っても数字が変わらない一番の原因です。まずは今ある商品・メニューを「入口」「本命」「単価アップ」の3つに分けて整理するだけで、見える景色が変わります。",
+  "集客・ブランディング":
+    "「いいものを作れば伝わる」という思い込みは、実は一番危険な油断です。あなたの事業を選ぶべき理由を、あなた自身の言葉で一文にできるかどうかが、これからの集客を左右します。",
+  "仕組み・スケール":
+    "自分がいないと回らない状態は、事業ではなく「あなたの仕事」のままだというサインです。任せられる仕組みがあるかどうかが、次のステージに進めるかの分かれ目になります。",
+  "PCスキル・ツール":
+    "感覚や紙・スマホだけの管理は、悪いわけではありませんが、事業が大きくなるほど確実に限界がきます。小さな作業からデジタル化していくことで、時間の使い方が変わります。",
+  "意識・マインド":
+    "「頑張ればなんとかなる」という気持ちは大切ですが、それだけに頼ると、いつまでも同じ場所から動けません。まず必要なのは根性ではなく、設計です。",
+};
+
+// チェック率の高いカテゴリ上位2件のアドバイス文（0件のカテゴリは除外）
+export function topCategoryAdvice(keys: Iterable<string>, max = 2): string[] {
+  const keySet = new Set(keys);
+  const ranked = SECTIONS.map((s, si) => {
+    const hitCount = s.items.filter((_, ii) => keySet.has(`${si}-${ii}`)).length;
+    return { title: s.title, ratio: hitCount / s.items.length, hitCount };
+  })
+    .filter((r) => r.hitCount > 0)
+    .sort((a, b) => b.ratio - a.ratio);
+
+  return ranked.slice(0, max).map((r) => CATEGORY_ADVICE[r.title]).filter(Boolean);
+}
+
 export function labelsFromKeys(keys: Iterable<string>): string[] {
   const labels: string[] = [];
   for (const key of keys) {

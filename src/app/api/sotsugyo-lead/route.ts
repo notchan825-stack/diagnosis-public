@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { appendSotsugyoRow } from "@/lib/sheets";
-import { VALID_KEYS, tier, labelsFromKeys } from "../../sotsugyo/scoring";
+import { sendSotsugyoDetailEmail } from "@/lib/email";
+import { VALID_KEYS, tier, labelsFromKeys, topCategoryAdvice } from "../../sotsugyo/scoring";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -23,14 +24,29 @@ export async function POST(request: Request) {
   const safeKeys = checkedKeys.filter(
     (k): k is string => typeof k === "string" && VALID_KEYS.has(k)
   );
-  const resultLabel = tier(safeKeys.length).label;
+  const resultTier = tier(safeKeys.length);
   const checkedLabels = labelsFromKeys(safeKeys);
 
+  // 記録はメール送信の成否に関わらず必ず試みる
   try {
-    await appendSotsugyoRow(name, email, checkedLabels, resultLabel);
-    return NextResponse.json({ ok: true });
+    await appendSotsugyoRow(name, email, checkedLabels, resultTier.label);
   } catch (err) {
     console.error("append-sotsugyo-row failed", err);
     return NextResponse.json({ error: "failed to record lead" }, { status: 500 });
+  }
+
+  try {
+    await sendSotsugyoDetailEmail(
+      email,
+      name,
+      resultTier.label,
+      resultTier.message,
+      topCategoryAdvice(safeKeys)
+    );
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("send-sotsugyo-detail-email failed", err);
+    // リードは記録済みなので、メール送信失敗はエラーにせずok扱い（本人が手動フォロー可能）
+    return NextResponse.json({ ok: true, emailFailed: true });
   }
 }

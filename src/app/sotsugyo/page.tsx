@@ -11,12 +11,12 @@ const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
 
 export default function SotsugyoPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [unlocked, setUnlocked] = useState(false); // 名前・メール送信後にtrue
   const [done, setDone] = useState(false); // チェックリスト→結果表示に切り替えたらtrue
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [detailSent, setDetailSent] = useState(false); // 詳細診断メール送信済みか
 
   const toggle = (key: string) => {
     setChecked((prev) => {
@@ -98,108 +98,6 @@ export default function SotsugyoPage() {
               </button>
             </div>
           </>
-        ) : !unlocked ? (
-          <>
-            {/* 結果を見る前のお名前・メールアドレス取得ゲート */}
-            <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <h2 className="mb-2 text-lg font-bold text-slate-800">
-                診断結果をお届けします
-              </h2>
-              <p className="mb-5 text-sm leading-relaxed text-slate-500">
-                お名前とメールアドレスをご入力いただくと、あなたの診断結果を表示します。
-              </p>
-              <form
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  setSubmitError("");
-                  setSubmitting(true);
-                  try {
-                    const res = await fetch("/api/sotsugyo-lead", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        name,
-                        email,
-                        checkedKeys: Array.from(checked),
-                      }),
-                    });
-                    if (!res.ok) throw new Error("failed");
-                    setUnlocked(true);
-                    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
-                  } catch {
-                    setSubmitError("送信に失敗しました。時間をおいて再度お試しください。");
-                  } finally {
-                    setSubmitting(false);
-                  }
-                }}
-                className="space-y-3"
-              >
-                <input
-                  type="text"
-                  required
-                  placeholder="お名前"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-amber-600 focus:outline-none"
-                />
-                <input
-                  type="email"
-                  required
-                  placeholder="メールアドレス"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-amber-600 focus:outline-none"
-                />
-                {submitError && (
-                  <p className="text-xs text-red-600">{submitError}</p>
-                )}
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-slate-800 py-4 text-base font-bold text-white shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
-                >
-                  <Mail className="h-4 w-4" />
-                  {submitting ? "送信中…" : "結果を見る"}
-                </button>
-              </form>
-            </section>
-
-            {/* メール登録なしでも進める入口（診断結果だけがメール登録の対価） */}
-            <section className="mb-6 text-center">
-              <p className="mb-3 text-xs text-slate-400">
-                メールアドレスの入力なしでも、こちらからご覧いただけます
-              </p>
-              <div className="flex flex-col items-center gap-2 sm:flex-row sm:justify-center">
-                <a
-                  href={SEMINAR_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-amber-500 px-5 py-2 text-sm font-bold text-amber-700 hover:bg-amber-50"
-                >
-                  セミナーの詳細を見る
-                </a>
-                <a
-                  href={CTA_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
-                >
-                  個別相談について見てみる
-                </a>
-              </div>
-            </section>
-
-            <button
-              onClick={() => {
-                setDone(false);
-                if (typeof window !== "undefined") window.scrollTo({ top: 0 });
-              }}
-              className="mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
-            >
-              <RotateCcw className="h-4 w-4" />
-              チェックリストに戻る
-            </button>
-          </>
         ) : (
           <>
             {/* 結果 */}
@@ -219,6 +117,77 @@ export default function SotsugyoPage() {
                 {result.label}
               </p>
               <p className="text-sm leading-relaxed text-slate-600">{result.message}</p>
+            </section>
+
+            {/* さらに詳しい診断（無料・メール送付） */}
+            <section className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5">
+              {detailSent ? (
+                <p className="text-sm leading-relaxed text-slate-700">
+                  送信しました。届いたメールをご確認ください。
+                </p>
+              ) : (
+                <>
+                  <h3 className="mb-1 text-sm font-bold text-slate-800">
+                    さらに詳しい診断をご希望の方は
+                  </h3>
+                  <p className="mb-4 text-xs leading-relaxed text-slate-500">
+                    お名前とメールアドレスをご入力いただくと、あなたの回答をもとにした詳細な診断内容を無料でメールにてお届けします。
+                  </p>
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setSubmitError("");
+                      setSubmitting(true);
+                      try {
+                        const res = await fetch("/api/sotsugyo-lead", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            name,
+                            email,
+                            checkedKeys: Array.from(checked),
+                          }),
+                        });
+                        if (!res.ok) throw new Error("failed");
+                        setDetailSent(true);
+                      } catch {
+                        setSubmitError("送信に失敗しました。時間をおいて再度お試しください。");
+                      } finally {
+                        setSubmitting(false);
+                      }
+                    }}
+                    className="space-y-2"
+                  >
+                    <input
+                      type="text"
+                      required
+                      placeholder="お名前"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-amber-600 focus:outline-none"
+                    />
+                    <input
+                      type="email"
+                      required
+                      placeholder="メールアドレス"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-amber-600 focus:outline-none"
+                    />
+                    {submitError && (
+                      <p className="text-xs text-red-600">{submitError}</p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
+                    >
+                      <Mail className="h-4 w-4" />
+                      {submitting ? "送信中…" : "無料で詳しい診断を受け取る"}
+                    </button>
+                  </form>
+                </>
+              )}
             </section>
 
             {/* 内訳 */}
@@ -297,7 +266,7 @@ export default function SotsugyoPage() {
               onClick={() => {
                 setChecked(new Set());
                 setDone(false);
-                setUnlocked(false);
+                setDetailSent(false);
                 setName("");
                 setEmail("");
                 setSubmitError("");
