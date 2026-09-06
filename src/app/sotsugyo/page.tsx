@@ -1,93 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { RotateCcw, ArrowRight, CheckCircle2 } from "lucide-react";
-
-// ひとり社長卒業診断（24項目）
-// 出典: コンサル事業資料 09_セルフ診断チェックリスト.md（2026-06-07版）
-const SECTIONS: { title: string; items: string[] }[] = [
-  {
-    title: "事業の現状",
-    items: [
-      "何年やっても月商がほぼ変わっていない",
-      "売上管理はどんぶり勘定、または「なんとなく」でやっている",
-      "メニュー・サービスが５つ以上あって、何が一番売りかわからない",
-      "価格を上げたいが、お客様に申し訳なくてできない",
-      "来店いただいたお客さまのゴールを設定していない",
-      "リピート来店をお客様のタイミングに任せている",
-    ],
-  },
-  {
-    title: "集客・ブランディング",
-    items: [
-      "「いいものを提供していれば自然に売れる」と思っている",
-      "競合調査や業界調査をしたことがない",
-      "「自分のお客様がどんな人か」を一言で説明できない",
-      "プロフィールや自己紹介に資格・経歴しか書いていない",
-      "集客はSNS・口コミ・紹介だけに頼っている",
-      "GOOGLEビジネスプロフィールの口コミが30件以下",
-    ],
-  },
-  {
-    title: "仕組み・スケール",
-    items: [
-      "自分がいないとお店・事業が回らない",
-      "人に任せたくても、教えるマニュアルや仕組みがない",
-      "「次に何をすればいいか」がいつも迷う",
-      "２店舗目の展開を考えているが、何から始めればいいかわからない",
-    ],
-  },
-  {
-    title: "PCスキル・ツール",
-    items: [
-      "PCに苦手意識があり、仕事の管理をスマホメインでやっている",
-      "売上・予約・顧客情報をExcelやツールで管理していない",
-      "SNS投稿に毎回１時間以上かかっている",
-      "AI（Gemini・ChatGPT・Claude）に毎日触れていない",
-    ],
-  },
-  {
-    title: "意識・マインド",
-    items: [
-      "「もっと頑張れば何とかなる」と思い続けて数年経つ",
-      "お金を稼ぐことは、無意識に「悪いこと」というメンタルブロックがある",
-      "うまくいかない理由を、景気・立地・お客さまなど外に要因を探してしまう",
-      "自分の事業は何のためにあるのか？ビジョンが明確になっていない",
-    ],
-  },
-];
-
-const TOTAL = SECTIONS.reduce((n, s) => n + s.items.length, 0);
+import { RotateCcw, ArrowRight, CheckCircle2, Mail } from "lucide-react";
+import { SECTIONS, TOTAL, tier } from "./scoring";
 
 // 相談導線（note 仕事のご依頼ページ）
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
-
-function tier(count: number) {
-  if (count <= 4)
-    return {
-      label: "基盤はできています",
-      message:
-        "事業の土台は整っています。次のステージへ行くための「ひと押し」——絞り込みと見せ方の設計だけが残っています。",
-      urgent: false,
-    };
-  if (count <= 9)
-    return {
-      label: "今が転換点です",
-      message:
-        "がんばりが空回りし始める時期です。仕組みを作る前に、まず「設計」——誰に・何を・なぜあなたから、の言語化が必要です。",
-      urgent: true,
-    };
-  return {
-    label: "一人で抱えすぎています",
-    message:
-      "このままでは数年後も同じ場所にいる可能性が高い状態です。足りないのは頑張りではなく、コンセプト・仕組み・見せ方の設計です。早急に動きましょう。",
-    urgent: true,
-  };
-}
+// セミナー導線（ひとり社長の仕組化支援セミナー・10/20,10/25）
+const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
 
 export default function SotsugyoPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
-  const [done, setDone] = useState(false);
+  const [unlocked, setUnlocked] = useState(false); // 名前・メール送信後にtrue
+  const [done, setDone] = useState(false); // チェックリスト→結果表示に切り替えたらtrue
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const toggle = (key: string) => {
     setChecked((prev) => {
@@ -169,6 +98,82 @@ export default function SotsugyoPage() {
               </button>
             </div>
           </>
+        ) : !unlocked ? (
+          <>
+            {/* 結果を見る前のお名前・メールアドレス取得ゲート */}
+            <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-2 text-lg font-bold text-slate-800">
+                診断結果をお届けします
+              </h2>
+              <p className="mb-5 text-sm leading-relaxed text-slate-500">
+                お名前とメールアドレスをご入力いただくと、あなたの診断結果を表示します。
+              </p>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setSubmitError("");
+                  setSubmitting(true);
+                  try {
+                    const res = await fetch("/api/sotsugyo-lead", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        name,
+                        email,
+                        checkedKeys: Array.from(checked),
+                      }),
+                    });
+                    if (!res.ok) throw new Error("failed");
+                    setUnlocked(true);
+                    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                  } catch {
+                    setSubmitError("送信に失敗しました。時間をおいて再度お試しください。");
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+                className="space-y-3"
+              >
+                <input
+                  type="text"
+                  required
+                  placeholder="お名前"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-amber-600 focus:outline-none"
+                />
+                <input
+                  type="email"
+                  required
+                  placeholder="メールアドレス"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm focus:border-amber-600 focus:outline-none"
+                />
+                {submitError && (
+                  <p className="text-xs text-red-600">{submitError}</p>
+                )}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-slate-800 py-4 text-base font-bold text-white shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
+                >
+                  <Mail className="h-4 w-4" />
+                  {submitting ? "送信中…" : "結果を見る"}
+                </button>
+              </form>
+            </section>
+            <button
+              onClick={() => {
+                setDone(false);
+                if (typeof window !== "undefined") window.scrollTo({ top: 0 });
+              }}
+              className="mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
+            >
+              <RotateCcw className="h-4 w-4" />
+              チェックリストに戻る
+            </button>
+          </>
         ) : (
           <>
             {/* 結果 */}
@@ -238,11 +243,38 @@ export default function SotsugyoPage() {
               </section>
             )}
 
+            {/* セミナー導線 */}
+            <section className="mb-6 rounded-2xl border-2 border-amber-500 bg-amber-50 p-6 text-center">
+              <p className="mb-2 text-xs font-bold tracking-wide text-amber-700">
+                オンラインセミナー開催
+              </p>
+              <h3 className="mb-3 text-base font-bold leading-snug text-slate-800">
+                ひとり社長の仕組化支援セミナー
+              </h3>
+              <p className="mb-4 text-sm leading-relaxed text-slate-600">
+                浅草の靴メーカー3代目社長が、実際に事業を整理した事例をそのままお話しします。
+                <br />
+                10月20日(火)・10月25日(日)開催／参加費3,000円
+              </p>
+              <a
+                href={SEMINAR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-105"
+              >
+                セミナーの詳細を見る
+              </a>
+            </section>
+
             {/* リセット */}
             <button
               onClick={() => {
                 setChecked(new Set());
                 setDone(false);
+                setUnlocked(false);
+                setName("");
+                setEmail("");
+                setSubmitError("");
                 if (typeof window !== "undefined") window.scrollTo({ top: 0 });
               }}
               className="mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
