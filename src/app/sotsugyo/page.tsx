@@ -45,7 +45,7 @@ export default function SotsugyoPage() {
             ひとり社長卒業診断
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
-            専門性を、広がる事業に変える準備はできていますか？
+あなたの専門性を広げる準備はできていますか？
             <br />
             当てはまる項目にチェックを入れてください（全{TOTAL}項目・約3分）
           </p>
@@ -131,7 +131,7 @@ export default function SotsugyoPage() {
                     さらに詳しい診断をご希望の方は
                   </h3>
                   <p className="mb-4 text-xs leading-relaxed text-slate-500">
-                    お名前とメールアドレスをご入力いただくと、あなたの回答をもとにした詳細な診断内容を無料でメールにてお届けします。
+                    お名前とメールアドレスをご入力いただくと、詳細な診断内容をお届けします。
                   </p>
                   <form
                     onSubmit={async (e) => {
@@ -219,12 +219,11 @@ export default function SotsugyoPage() {
                 <p className="mb-3 text-sm leading-relaxed">
                   あなたの事業に足りないのは「頑張り」ではありません。
                   <br />
-                  <span className="font-bold">コンセプト・仕組み・見せ方</span>
+                  <span className="font-bold">売れるコンセプト・儲かる仕組</span>
                   の設計です。
                 </p>
                 <p className="mb-4 text-xs leading-relaxed text-slate-300">
-                  現役社長として自社ブランドを育ててきた経験から、
-                  あなたの事業を「選ばれるブランド」に変える伴走をします。
+                  あなたの「めんどうくさい」を一緒に排除して、仕組みづくりを伴走します。
                 </p>
                 <a
                   href={CTA_URL}
