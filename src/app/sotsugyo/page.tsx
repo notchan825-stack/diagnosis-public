@@ -158,6 +158,29 @@ export default function SotsugyoPage() {
               ))}
             </section>
 
+            {/* セミナー導線 */}
+            <section className="mb-6 rounded-2xl border-2 border-amber-500 bg-amber-50 p-6 text-center">
+              <p className="mb-2 text-xs font-bold tracking-wide text-amber-700">
+                オンラインセミナー開催
+              </p>
+              <h3 className="mb-3 text-base font-bold leading-snug text-slate-800">
+                ひとり社長の仕組化支援セミナー
+              </h3>
+              <p className="mb-4 text-sm leading-relaxed text-slate-600">
+                浅草の靴メーカーを経営する社長が、実際に事業を整理した事例をそのままお話しします。
+                <br />
+                10月20日(火)・10月25日(日)開催／参加費3,000円
+              </p>
+              <a
+                href={SEMINAR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-105"
+              >
+                セミナーの詳細を見る
+              </a>
+            </section>
+
             {/* CTA */}
             {count >= 5 && (
               <section className="mb-6 rounded-2xl bg-slate-800 p-6 text-center text-white">
@@ -181,29 +204,6 @@ export default function SotsugyoPage() {
                 </a>
               </section>
             )}
-
-            {/* セミナー導線 */}
-            <section className="mb-6 rounded-2xl border-2 border-amber-500 bg-amber-50 p-6 text-center">
-              <p className="mb-2 text-xs font-bold tracking-wide text-amber-700">
-                オンラインセミナー開催
-              </p>
-              <h3 className="mb-3 text-base font-bold leading-snug text-slate-800">
-                ひとり社長の仕組化支援セミナー
-              </h3>
-              <p className="mb-4 text-sm leading-relaxed text-slate-600">
-                浅草の靴メーカー3代目社長が、実際に事業を整理した事例をそのままお話しします。
-                <br />
-                10月20日(火)・10月25日(日)開催／参加費3,000円
-              </p>
-              <a
-                href={SEMINAR_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-105"
-              >
-                セミナーの詳細を見る
-              </a>
-            </section>
 
             {/* リセット */}
             <button
