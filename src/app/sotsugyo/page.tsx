@@ -116,25 +116,6 @@ export default function SotsugyoPage() {
               <p className="text-sm leading-relaxed text-slate-600">{result.message}</p>
             </section>
 
-            {/* さらに詳しい診断（無料・AutoBiz申込） */}
-            <section className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5 text-center">
-              <h3 className="mb-1 text-sm font-bold text-slate-800">
-                さらに詳しい診断をご希望の方は
-              </h3>
-              <p className="mb-4 text-xs leading-relaxed text-slate-500">
-                お名前とメールアドレスをご入力いただくと、詳細な診断内容をお届けします。
-              </p>
-              <a
-                href={DETAIL_DIAGNOSIS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-105"
-              >
-                <Mail className="h-4 w-4" />
-                無料で詳しい診断を受け取る
-              </a>
-            </section>
-
             {/* 内訳 */}
             <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5">
               <h3 className="mb-3 text-sm font-bold text-slate-700">
@@ -204,6 +185,25 @@ export default function SotsugyoPage() {
                 </a>
               </section>
             )}
+
+            {/* さらに詳しい診断（無料・AutoBiz申込） */}
+            <section className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5 text-center">
+              <h3 className="mb-1 text-sm font-bold text-slate-800">
+                さらに詳しい診断をご希望の方は
+              </h3>
+              <p className="mb-4 text-xs leading-relaxed text-slate-500">
+                お名前とメールアドレスをご入力いただくと、詳細な診断内容をお届けします。
+              </p>
+              <a
+                href={DETAIL_DIAGNOSIS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-105"
+              >
+                <Mail className="h-4 w-4" />
+                無料で詳しい診断を受け取る
+              </a>
+            </section>
 
             {/* リセット */}
             <button
