@@ -8,15 +8,12 @@ import { SECTIONS, TOTAL, tier } from "./scoring";
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
 // セミナー導線（ひとり社長の仕組化支援セミナー・10/20,10/25）
 const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
+// 詳細診断の申込導線（AutoBiz。名前・メールはAutoBizのリストへ直接入る）
+const DETAIL_DIAGNOSIS_URL = "https://88auto.biz/andsteady/registp/sotsugyo-shindan.htm";
 
 export default function SotsugyoPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [done, setDone] = useState(false); // チェックリスト→結果表示に切り替えたらtrue
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState("");
-  const [detailSent, setDetailSent] = useState(false); // 詳細診断メール送信済みか
 
   const toggle = (key: string) => {
     setChecked((prev) => {
@@ -119,75 +116,23 @@ export default function SotsugyoPage() {
               <p className="text-sm leading-relaxed text-slate-600">{result.message}</p>
             </section>
 
-            {/* さらに詳しい診断（無料・メール送付） */}
-            <section className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5">
-              {detailSent ? (
-                <p className="text-sm leading-relaxed text-slate-700">
-                  送信しました。届いたメールをご確認ください。
-                </p>
-              ) : (
-                <>
-                  <h3 className="mb-1 text-sm font-bold text-slate-800">
-                    さらに詳しい診断をご希望の方は
-                  </h3>
-                  <p className="mb-4 text-xs leading-relaxed text-slate-500">
-                    お名前とメールアドレスをご入力いただくと、詳細な診断内容をお届けします。
-                  </p>
-                  <form
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      setSubmitError("");
-                      setSubmitting(true);
-                      try {
-                        const res = await fetch("/api/sotsugyo-lead", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                            name,
-                            email,
-                            checkedKeys: Array.from(checked),
-                          }),
-                        });
-                        if (!res.ok) throw new Error("failed");
-                        setDetailSent(true);
-                      } catch {
-                        setSubmitError("送信に失敗しました。時間をおいて再度お試しください。");
-                      } finally {
-                        setSubmitting(false);
-                      }
-                    }}
-                    className="space-y-2"
-                  >
-                    <input
-                      type="text"
-                      required
-                      placeholder="お名前"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-amber-600 focus:outline-none"
-                    />
-                    <input
-                      type="email"
-                      required
-                      placeholder="メールアドレス"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:border-amber-600 focus:outline-none"
-                    />
-                    {submitError && (
-                      <p className="text-xs text-red-600">{submitError}</p>
-                    )}
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="flex w-full items-center justify-center gap-2 rounded-full bg-amber-600 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
-                    >
-                      <Mail className="h-4 w-4" />
-                      {submitting ? "送信中…" : "無料で詳しい診断を受け取る"}
-                    </button>
-                  </form>
-                </>
-              )}
+            {/* さらに詳しい診断（無料・AutoBiz申込） */}
+            <section className="mb-6 rounded-2xl border border-amber-200 bg-amber-50/60 p-5 text-center">
+              <h3 className="mb-1 text-sm font-bold text-slate-800">
+                さらに詳しい診断をご希望の方は
+              </h3>
+              <p className="mb-4 text-xs leading-relaxed text-slate-500">
+                お名前とメールアドレスをご入力いただくと、詳細な診断内容をお届けします。
+              </p>
+              <a
+                href={DETAIL_DIAGNOSIS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-105"
+              >
+                <Mail className="h-4 w-4" />
+                無料で詳しい診断を受け取る
+              </a>
             </section>
 
             {/* 内訳 */}
@@ -265,10 +210,6 @@ export default function SotsugyoPage() {
               onClick={() => {
                 setChecked(new Set());
                 setDone(false);
-                setDetailSent(false);
-                setName("");
-                setEmail("");
-                setSubmitError("");
                 if (typeof window !== "undefined") window.scrollTo({ top: 0 });
               }}
               className="mx-auto flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm text-slate-600 hover:bg-slate-50"
