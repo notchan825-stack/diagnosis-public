@@ -172,7 +172,7 @@ export default function SotsugyoPage() {
                   の設計です。
                 </p>
                 <p className="mb-4 text-xs leading-relaxed text-slate-300">
-                  あなたの「めんどうくさい」を一緒に排除して、仕組みづくりを伴走します。
+                  あなたの「めんどうくさい」を一緒に排除して、仕組づくりを伴走します。
                 </p>
                 <a
                   href={CTA_URL}
