@@ -6,7 +6,7 @@ import { SECTIONS, TOTAL, tier } from "./scoring";
 
 // 相談導線（note 仕事のご依頼ページ）
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
-// セミナー導線（ひとり社長の仕組化支援セミナー・10/20,10/25）
+// セミナー導線（アナログ社長の仕組化支援セミナー・10/20,10/25）
 const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
 // 詳細診断の申込導線（AutoBiz。名前・メールはAutoBizのリストへ直接入る）
 const DETAIL_DIAGNOSIS_URL = "https://88auto.biz/andsteady/registp/sotsugyo-shindan.htm";
@@ -39,10 +39,10 @@ export default function SotsugyoPage() {
             専門家オーナーのための
           </p>
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
-            ひとり社長卒業診断
+            アナログ社長卒業診断
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
-あなたの専門性を広げる準備はできていますか？
+あなたの業務、無駄なくお金に変えられていますか？
             <br />
             当てはまる項目にチェックを入れてください（全{TOTAL}項目・約3分）
           </p>
@@ -145,7 +145,7 @@ export default function SotsugyoPage() {
                 オンラインセミナー開催
               </p>
               <h3 className="mb-3 text-base font-bold leading-snug text-slate-800">
-                ひとり社長の仕組化支援セミナー
+                アナログ社長の仕組化支援セミナー
               </h3>
               <p className="mb-4 text-sm leading-relaxed text-slate-600">
                 浅草の靴メーカーを経営する社長が、実際に事業を整理した事例をそのままお話しします。
@@ -221,7 +221,7 @@ export default function SotsugyoPage() {
         )}
 
         <footer className="mt-10 text-center text-xs text-slate-400">
-          2026 © ひとり社長卒業診断
+          2026 © アナログ社長卒業診断
         </footer>
       </div>
     </main>
