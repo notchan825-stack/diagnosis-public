@@ -6,7 +6,7 @@ import { SECTIONS, TOTAL, tier } from "./scoring";
 
 // 相談導線（note 仕事のご依頼ページ）
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
-// セミナー導線（アナログ社長の仕組化支援セミナー・10/20,10/25）
+// セミナー導線（アナログ社長の仕組化支援セミナー・10/28,11/1）
 const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
 // 詳細診断の申込導線（AutoBiz。名前・メールはAutoBizのリストへ直接入る）
 const DETAIL_DIAGNOSIS_URL = "https://88auto.biz/andsteady/registp/sotsugyo-shindan.htm";
@@ -150,7 +150,7 @@ export default function SotsugyoPage() {
               <p className="mb-4 text-sm leading-relaxed text-slate-600">
                 浅草の靴メーカーを経営する社長が、実際に事業を整理した事例をそのままお話しします。
                 <br />
-                10月20日(火)・10月25日(日)開催／参加費3,000円
+                10月28日(水)・11月1日(日)開催／参加費3,000円
               </p>
               <a
                 href={SEMINAR_URL}
