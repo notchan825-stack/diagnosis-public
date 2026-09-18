@@ -36,13 +36,13 @@ export default function SotsugyoPage() {
         {/* ヘッダー */}
         <header className="mb-8 text-center">
           <p className="mb-2 text-xs font-semibold tracking-widest text-amber-700">
-            専門家オーナーのための
+            毎日、なんだか、忙しい社長のための
           </p>
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
-            アナログ社長卒業診断
+            アナログ社長診断
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
-あなたの業務、無駄なくお金に変えられていますか？
+あなたがどうしてもやらなきゃいけない業務、どのくらいありますか？
             <br />
             当てはまる項目にチェックを入れてください（全{TOTAL}項目・約3分）
           </p>
