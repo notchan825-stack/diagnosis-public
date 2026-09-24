@@ -59,11 +59,13 @@ export async function appendSotsugyoViewRow(checkedCount: number, resultLabel: s
   const now = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
   const row = [[now, checkedCount, resultLabel]];
 
+  // RAW指定: 呼び出し元(APIルート)で resultLabel は固定文言のみに絞っているが、
+  // ここでも念のため数式として解釈させない(スプレッドシート数式インジェクション対策の二重化)。
   try {
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
-      valueInputOption: "USER_ENTERED",
+      valueInputOption: "RAW",
       requestBody: { values: row },
     });
   } catch (err) {
@@ -82,7 +84,7 @@ export async function appendSotsugyoViewRow(checkedCount: number, resultLabel: s
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
       range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
-      valueInputOption: "USER_ENTERED",
+      valueInputOption: "RAW",
       requestBody: {
         values: [["日時", "チェック数", "結果タイプ"], ...row],
       },
