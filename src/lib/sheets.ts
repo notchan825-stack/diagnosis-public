@@ -46,6 +46,50 @@ export async function getDiagnosisRows(): Promise<DiagnosisRow[]> {
     .filter((r) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(r.email));
 }
 
+const SOTSUGYO_VIEW_SHEET = "sotsugyo_views";
+
+// アナログ社長卒業診断(/sotsugyo)の「結果を見た」回数を記録する専用タブ。
+// 個人情報は取っていない画面のため、匿名でタイムスタンプ・チェック数・結果ラベルのみ記録する。
+export async function appendSotsugyoViewRow(checkedCount: number, resultLabel: string) {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  const now = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+  const row = [[now, checkedCount, resultLabel]];
+
+  try {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: { values: row },
+    });
+  } catch (err) {
+    // タブが未作成だと "Unable to parse range" 相当のエラーになる。
+    // その場合だけタブを新規作成し、ヘッダー行込みで作り直してから1回だけ再試行する。
+    const message = err instanceof Error ? err.message : String(err);
+    if (!/Unable to parse range|not found/i.test(message)) throw err;
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title: SOTSUGYO_VIEW_SHEET } } }],
+      },
+    });
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: [["日時", "チェック数", "結果タイプ"], ...row],
+      },
+    });
+  }
+}
+
 export async function appendDiagnosisRow(
   email: string,
   checkedLabels: string[],

@@ -87,6 +87,11 @@ export default function SotsugyoPage() {
                 onClick={() => {
                   setDone(true);
                   if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+                  fetch("/api/sotsugyo-view", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ checkedCount: count, resultLabel: result.label }),
+                  }).catch(() => {});
                 }}
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-slate-800 py-4 text-base font-bold text-white shadow-lg transition-transform hover:scale-[1.01] active:scale-[0.99]"
               >
