@@ -92,6 +92,43 @@ export async function appendSotsugyoViewRow(checkedCount: number, resultLabel: s
   }
 }
 
+export interface SotsugyoViewRow {
+  viewedAt: string;
+  checkedCount: number;
+  resultLabel: string;
+}
+
+// sotsugyo_viewsタブを丸ごと読み出す（管理者専用エンドポイントからのみ呼ばれる想定）。
+// タブ自体が未作成（＝まだ1件も記録がない）場合は空配列を返す。
+export async function getSotsugyoViewRows(): Promise<SotsugyoViewRow[]> {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  let rows: unknown[][];
+  try {
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
+    });
+    rows = res.data.values ?? [];
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (/Unable to parse range|not found/i.test(message)) return [];
+    throw err;
+  }
+
+  return rows
+    .filter((row) => row[0] !== "日時") // ヘッダー行を除外
+    .map((row) => ({
+      viewedAt: String(row[0] ?? ""),
+      checkedCount: Number(row[1]) || 0,
+      resultLabel: String(row[2] ?? ""),
+    }))
+    .filter((r) => r.viewedAt);
+}
+
 export async function appendDiagnosisRow(
   email: string,
   checkedLabels: string[],
