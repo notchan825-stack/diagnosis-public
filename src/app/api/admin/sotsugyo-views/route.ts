@@ -48,10 +48,13 @@ export async function GET(request: Request) {
     const byLabel: Record<string, number> = {};
     for (const r of rows) byLabel[r.resultLabel] = (byLabel[r.resultLabel] ?? 0) + 1;
 
+    const includeRows = searchParams.get("raw") === "1";
+
     return NextResponse.json({
       total: rows.length,
       today: todayCount,
       byResultLabel: byLabel,
+      ...(includeRows ? { rows } : {}),
     });
   } catch (err) {
     console.error("sotsugyo-views aggregate failed", err);
