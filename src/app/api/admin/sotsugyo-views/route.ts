@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
-import { getSotsugyoViewRows } from "@/lib/sheets";
+import { getSotsugyoViewRows, deleteTestSotsugyoViewRows } from "@/lib/sheets";
 
 // アナログ社長卒業診断(/sotsugyo)の「結果を見た」件数を日次で報告するための
 // 集計エンドポイント。認証はdiagnosis-leadsと同じDIAGNOSIS_ADMIN_KEY共有シークレット。
@@ -31,6 +31,11 @@ export async function GET(request: Request) {
   }
 
   try {
+    if (searchParams.get("cleanup") === "1") {
+      const result = await deleteTestSotsugyoViewRows();
+      console.log("sotsugyo-views cleanup", result);
+    }
+
     const rows = await getSotsugyoViewRows();
     const todayPrefix = new Date().toLocaleDateString("ja-JP", {
       timeZone: "Asia/Tokyo",

@@ -129,6 +129,63 @@ export async function getSotsugyoViewRows(): Promise<SotsugyoViewRow[]> {
     .filter((r) => r.viewedAt);
 }
 
+// 2026-09-24の実装検証時にマッキーが送ったテスト行だけを狙い撃ちで削除する。
+// 見分け方: ラベルが "deploy-check" / "#ERROR!" / "デプロイ確認テスト" を含む、
+// またはチェック数が999（設問数TOTALを超える、実際のお客様にはありえない値）。
+// 該当しない行（実際のお客様の閲覧記録）には一切触れない。1回限りの後始末用。
+export async function deleteTestSotsugyoViewRows(): Promise<{ deleted: number }> {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  const meta = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+  const sheet = meta.data.sheets?.find((s) => s.properties?.title === SOTSUGYO_VIEW_SHEET);
+  if (!sheet || sheet.properties?.sheetId == null) return { deleted: 0 };
+  const sheetId = sheet.properties.sheetId;
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SPREADSHEET_ID,
+    range: `${SOTSUGYO_VIEW_SHEET}!A:C`,
+  });
+  const rows = res.data.values ?? [];
+
+  const isTestRow = (row: unknown[]) => {
+    const label = String(row[2] ?? "");
+    const count = Number(row[1]);
+    return (
+      label === "deploy-check" ||
+      label.includes("デプロイ確認テスト") ||
+      label === "#ERROR!" ||
+      count === 999
+    );
+  };
+
+  const rowIndicesToDelete: number[] = [];
+  rows.forEach((row, i) => {
+    if (i === 0 && row[0] === "日時") return; // ヘッダー行は残す
+    if (isTestRow(row)) rowIndicesToDelete.push(i);
+  });
+
+  if (rowIndicesToDelete.length === 0) return { deleted: 0 };
+
+  // 後ろの行から削除しないと、削除のたびに残り行のインデックスがズレる
+  const requests = rowIndicesToDelete
+    .sort((a, b) => b - a)
+    .map((i) => ({
+      deleteDimension: {
+        range: { sheetId, dimension: "ROWS" as const, startIndex: i, endIndex: i + 1 },
+      },
+    }));
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId: SPREADSHEET_ID,
+    requestBody: { requests },
+  });
+
+  return { deleted: rowIndicesToDelete.length };
+}
+
 export async function appendDiagnosisRow(
   email: string,
   checkedLabels: string[],
