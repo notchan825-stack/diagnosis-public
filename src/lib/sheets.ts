@@ -153,11 +153,18 @@ export async function deleteTestSotsugyoViewRows(): Promise<{ deleted: number }>
   const isTestRow = (row: unknown[]) => {
     const label = String(row[2] ?? "");
     const count = Number(row[1]);
+    const viewedAt = String(row[0] ?? "");
     return (
       label === "deploy-check" ||
       label.includes("デプロイ確認テスト") ||
       label === "#ERROR!" ||
-      count === 999
+      count === 999 ||
+      // 2026-09-25追記: 最終動作確認で送った3件(2026/9/24 11:47:12・11:47:13・11:48:16)は
+      // 上のパターンに一致しない「正常に見えるテスト値」だったため、時刻を直接指定して除外する。
+      // それ以外の本物の閲覧記録(同日23:51:01等)には触れない。
+      viewedAt === "2026/9/24 11:47:12" ||
+      viewedAt === "2026/9/24 11:47:13" ||
+      viewedAt === "2026/9/24 11:48:16"
     );
   };
 
