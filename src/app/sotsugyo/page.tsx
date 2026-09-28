@@ -1,8 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RotateCcw, ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { SECTIONS, TOTAL, tier } from "./scoring";
+
+// ページ表示・チェック開始・各CTAクリックを匿名で記録する（お客様体験はブロックしない）。
+function trackEvent(eventType: "page_view" | "started" | "cta_seminar" | "cta_consult" | "cta_detail") {
+  fetch("/api/sotsugyo-event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventType }),
+  }).catch(() => {});
+}
 
 // 相談導線（note 仕事のご依頼ページ）
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
@@ -15,11 +24,19 @@ export default function SotsugyoPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [done, setDone] = useState(false); // チェックリスト→結果表示に切り替えたらtrue
 
+  useEffect(() => {
+    trackEvent("page_view");
+    // マウント時に1回だけ送る
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const toggle = (key: string) => {
     setChecked((prev) => {
+      const wasEmpty = prev.size === 0;
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
+      if (wasEmpty && next.size === 1) trackEvent("started");
       return next;
     });
   };
@@ -161,6 +178,7 @@ export default function SotsugyoPage() {
                 href={SEMINAR_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("cta_seminar")}
                 className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-105"
               >
                 セミナーの詳細を見る
@@ -183,6 +201,7 @@ export default function SotsugyoPage() {
                   href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackEvent("cta_consult")}
                   className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-bold text-slate-900 transition-transform hover:scale-105"
                 >
                   <CheckCircle2 className="h-4 w-4" />
@@ -203,6 +222,7 @@ export default function SotsugyoPage() {
                 href={DETAIL_DIAGNOSIS_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => trackEvent("cta_detail")}
                 className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-transform hover:scale-105"
               >
                 <Mail className="h-4 w-4" />

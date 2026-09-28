@@ -193,6 +193,89 @@ export async function deleteTestSotsugyoViewRows(): Promise<{ deleted: number }>
   return { deleted: rowIndicesToDelete.length };
 }
 
+const SOTSUGYO_EVENT_SHEET = "sotsugyo_events";
+
+// /sotsugyo の広告クリック→診断ページ到達→CTAクリックの各段階を匿名で記録する
+// 専用タブ。個人情報は扱わない（2026-09-28導入・診断完了はあるのに次の一歩に
+// 進む人が見えない問題を切り分けるため）。
+export type SotsugyoEventType =
+  | "page_view"
+  | "started"
+  | "cta_seminar"
+  | "cta_consult"
+  | "cta_detail";
+
+export async function appendSotsugyoEventRow(eventType: SotsugyoEventType) {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  const now = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
+  const row = [[now, eventType]];
+
+  try {
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_EVENT_SHEET}!A:B`,
+      valueInputOption: "RAW",
+      requestBody: { values: row },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (!/Unable to parse range|not found/i.test(message)) throw err;
+
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId: SPREADSHEET_ID,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title: SOTSUGYO_EVENT_SHEET } } }],
+      },
+    });
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_EVENT_SHEET}!A:B`,
+      valueInputOption: "RAW",
+      requestBody: {
+        values: [["日時", "イベント"], ...row],
+      },
+    });
+  }
+}
+
+export interface SotsugyoEventRow {
+  occurredAt: string;
+  eventType: string;
+}
+
+export async function getSotsugyoEventRows(): Promise<SotsugyoEventRow[]> {
+  const sheets = getSheetsClient();
+  if (!sheets || !SPREADSHEET_ID) {
+    throw new Error("Google Sheets is not configured");
+  }
+
+  let rows: unknown[][];
+  try {
+    const res = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SOTSUGYO_EVENT_SHEET}!A:B`,
+    });
+    rows = res.data.values ?? [];
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    if (/Unable to parse range|not found/i.test(message)) return [];
+    throw err;
+  }
+
+  return rows
+    .filter((row) => row[0] !== "日時")
+    .map((row) => ({
+      occurredAt: String(row[0] ?? ""),
+      eventType: String(row[1] ?? ""),
+    }))
+    .filter((r) => r.occurredAt);
+}
+
 export async function appendDiagnosisRow(
   email: string,
   checkedLabels: string[],
