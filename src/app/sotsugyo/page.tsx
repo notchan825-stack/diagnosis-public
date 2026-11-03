@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { RotateCcw, ArrowRight, CheckCircle2, Mail } from "lucide-react";
+import { RotateCcw, ArrowRight } from "lucide-react";
 import ConsultCta from "@/components/ConsultCta";
 import { SECTIONS, TOTAL, tier } from "./scoring";
 
@@ -14,8 +14,6 @@ function trackEvent(eventType: "page_view" | "started" | "cta_seminar" | "cta_co
   }).catch(() => {});
 }
 
-// 相談導線（note 仕事のご依頼ページ）
-const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
 
 export default function SotsugyoPage() {
   const [checked, setChecked] = useState<Set<string>>(new Set());
@@ -160,31 +158,6 @@ export default function SotsugyoPage() {
 
             {/* セミナー導線 */}
             <ConsultCta onConsultClick={() => trackEvent("cta_consult")} />
-
-            {/* CTA */}
-            {count >= 5 && (
-              <section className="mb-6 rounded-2xl bg-slate-800 p-6 text-center text-white">
-                <p className="mb-3 text-sm leading-relaxed">
-                  あなたの事業に足りないのは「頑張り」ではありません。
-                  <br />
-                  <span className="font-bold">売れるコンセプト・儲かる仕組</span>
-                  の設計です。
-                </p>
-                <p className="mb-4 text-xs leading-relaxed text-slate-300">
-                  あなたの「めんどうくさい」を一緒に排除して、仕組づくりを伴走します。
-                </p>
-                <a
-                  href={CTA_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEvent("cta_consult")}
-                  className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-bold text-slate-900 transition-transform hover:scale-105"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  個別相談について見てみる
-                </a>
-              </section>
-            )}
 
 
             {/* リセット */}
