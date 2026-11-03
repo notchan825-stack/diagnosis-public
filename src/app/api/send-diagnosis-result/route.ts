@@ -30,23 +30,43 @@ function resultSummary(result: ReturnType<typeof diagnose>) {
   return TIER_LABELS[result.tier];
 }
 
+// アンド・ステディ本体サイトの「メール講座LP」(andsteady.com/mailseminar)から呼ばれる
+// ため、この2つのオリジンだけCORSを許可する（2026-11-03）。それ以外には何も足さない。
+const ALLOWED_ORIGINS = new Set(["https://andsteady.com", "https://www.andsteady.com"]);
+
+function corsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get("origin") ?? "";
+  if (!ALLOWED_ORIGINS.has(origin)) return {};
+  return {
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
+  };
+}
+
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(request) });
+}
+
 export async function POST(request: Request) {
+  const cors = corsHeaders(request);
   const body = await request.json().catch(() => null);
   const email = body?.email;
   const checkedIds = body?.checkedIds;
 
   if (typeof email !== "string" || !EMAIL_RE.test(email)) {
-    return NextResponse.json({ error: "invalid email" }, { status: 400 });
+    return NextResponse.json({ error: "invalid email" }, { status: 400, headers: cors });
   }
   if (!Array.isArray(checkedIds) || checkedIds.length === 0) {
-    return NextResponse.json({ error: "checkedIds is required" }, { status: 400 });
+    return NextResponse.json({ error: "checkedIds is required" }, { status: 400, headers: cors });
   }
 
   const safeIds = new Set(
     checkedIds.filter((id): id is string => typeof id === "string" && VALID_IDS.has(id))
   );
   if (safeIds.size === 0) {
-    return NextResponse.json({ error: "no valid checkedIds" }, { status: 400 });
+    return NextResponse.json({ error: "no valid checkedIds" }, { status: 400, headers: cors });
   }
 
   const result = diagnose(safeIds);
@@ -61,9 +81,10 @@ export async function POST(request: Request) {
 
   try {
     await sendDiagnosisResultEmail(email, result.text);
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, text: result.text }, { headers: cors });
   } catch (err) {
     console.error("send-diagnosis-result failed", err);
-    return NextResponse.json({ error: "failed to send email" }, { status: 500 });
+    // メール送信に失敗しても、LPは結果の文章を表示できるよう text を返す
+    return NextResponse.json({ error: "failed to send email", text: result.text }, { status: 500, headers: cors });
   }
 }
