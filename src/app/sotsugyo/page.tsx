@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { RotateCcw, ArrowRight, CheckCircle2, Mail } from "lucide-react";
+import ConsultCta from "@/components/ConsultCta";
 import { SECTIONS, TOTAL, tier } from "./scoring";
 
 // ページ表示・チェック開始・各CTAクリックを匿名で記録する（お客様体験はブロックしない）。
@@ -15,8 +16,6 @@ function trackEvent(eventType: "page_view" | "started" | "cta_seminar" | "cta_co
 
 // 相談導線（note 仕事のご依頼ページ）
 const CTA_URL = "https://note.com/onozaki_noriko/n/n8379446cf997";
-// セミナー導線（なんだか忙しい社長の仕組化支援セミナー。日程はLP側で随時更新のため、ここには具体日程を書かない）
-const SEMINAR_URL = "https://meguri168.com/shikumika-seminar";
 // 詳細診断の申込導線（AutoBiz。名前・メールはAutoBizのリストへ直接入る）
 const DETAIL_DIAGNOSIS_URL = "https://88auto.biz/andsteady/registp/sotsugyo-shindan.htm";
 
@@ -162,28 +161,7 @@ export default function SotsugyoPage() {
             </section>
 
             {/* セミナー導線 */}
-            <section className="mb-6 rounded-2xl border-2 border-amber-500 bg-amber-50 p-6 text-center">
-              <p className="mb-2 text-xs font-bold tracking-wide text-amber-700">
-                オンラインセミナー開催
-              </p>
-              <h3 className="mb-3 text-base font-bold leading-snug text-slate-800">
-                なんだか忙しい社長の仕組化支援セミナー
-              </h3>
-              <p className="mb-4 text-sm leading-relaxed text-slate-600">
-                浅草の靴メーカーを経営する社長が、実際に事業を整理した事例をそのままお話しします。
-                <br />
-                好評につき、随時開催中／参加費3,000円
-              </p>
-              <a
-                href={SEMINAR_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent("cta_seminar")}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-6 py-3 text-sm font-bold text-white transition-transform hover:scale-105"
-              >
-                セミナーの詳細を見る
-              </a>
-            </section>
+            <ConsultCta onConsultClick={() => trackEvent("cta_consult")} />
 
             {/* CTA */}
             {count >= 5 && (
