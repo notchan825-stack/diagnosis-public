@@ -5,7 +5,7 @@ import { CheckCircle2, Mail } from "lucide-react";
 // 診断ページ（/shindan・/sotsugyo）の結果の下に出す共通部分。直すときはここだけ直す（2026-11-03）。
 // 個別相談の申込先（AutoBizの経営相談申込フォーム）
 export const CONSULT_URL = "https://88auto.biz/andsteady/registp/soudan.htm";
-// ８日間メール（小さなお店の経営８つの心得　令和版）の登録先（AutoBiz pid=37・2026-11-03）。
+// ８日間メール（小さな会社の経営８つの心得）の登録先（AutoBiz pid=37・2026-11-03）。
 export const MAIL_URL: string = "https://88auto.biz/andsteady/registp/keiei-kokoroe.htm";
 
 export default function ConsultCta({ onConsultClick }: { onConsultClick?: () => void }) {
@@ -35,13 +35,15 @@ export default function ConsultCta({ onConsultClick }: { onConsultClick?: () => 
       <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 text-center">
         <p className="mb-1 text-xs font-bold text-slate-500">もう少し学んでみたいあなたは</p>
         <h3 className="mb-2 text-sm font-bold leading-snug text-slate-800">
-          小さなお店の経営８つの心得　令和版
+          小さな会社の経営８つの心得
         </h3>
         <p className="mb-4 text-xs leading-relaxed text-slate-500">
           ８日にわたってお届けしています（無料）
         </p>
         <a
           href={MAIL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
         >
           <Mail className="h-4 w-4" />
