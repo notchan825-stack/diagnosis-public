@@ -26,14 +26,14 @@ export default function ShindanPage() {
       <div className="mx-auto max-w-xl px-4 py-8 sm:py-12">
         <header className="mb-8 text-center">
           <p className="mb-2 text-sm font-semibold leading-relaxed text-amber-700">
-            サロン・飲食店・小売店など、
+            サロン・飲食店・小売店など
             <br />
             小さなお店のオーナーさんへ
           </p>
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
-            毎日忙しいのに、
-            <br />
-            なぜか利益が残らない。
+            <span className="inline-block">毎日忙しいのに</span>
+            　
+            <span className="inline-block">利益が残らないのは、なぜ？</span>
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
             当てはまるものにチェックを入れてください
