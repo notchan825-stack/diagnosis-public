@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "なんで忙しいんだろう？がわかる診断",
+  title: "毎日忙しいのに、なぜか利益が残らない。",
   description:
     "なんで忙しいんだろう？の原因を探します。５つのチェックで、約１分。",
 };

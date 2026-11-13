@@ -25,13 +25,15 @@ export default function ShindanPage() {
     <main className="min-h-screen bg-slate-50 text-slate-800">
       <div className="mx-auto max-w-xl px-4 py-8 sm:py-12">
         <header className="mb-8 text-center">
-          <p className="mb-2 text-xs font-semibold tracking-widest text-amber-700">
-            なんだか毎日、忙しい。そんなあなたへ
+          <p className="mb-2 text-sm font-semibold leading-relaxed text-amber-700">
+            サロン・飲食店・小売店など、
+            <br />
+            小さなお店のオーナーさんへ
           </p>
           <h1 className="mb-3 text-2xl font-bold leading-snug sm:text-3xl">
-            なんで忙しいんだろう？
+            毎日忙しいのに、
             <br />
-            の原因を探します
+            なぜか利益が残らない。
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
             当てはまるものにチェックを入れてください
