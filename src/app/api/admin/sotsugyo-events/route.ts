@@ -56,6 +56,11 @@ export async function GET(request: Request) {
       cta_seminar: summary("cta_seminar"),
       cta_consult: summary("cta_consult"),
       cta_detail: summary("cta_detail"),
+      shindan_view: summary("shindan_view"),
+      shindan_started: summary("shindan_started"),
+      shindan_done: summary("shindan_done"),
+      shindan_cta_consult: summary("shindan_cta_consult"),
+      shindan_cta_mail: summary("shindan_cta_mail"),
       ...(includeRows ? { rows } : {}),
     });
   } catch (err) {

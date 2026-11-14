@@ -1,18 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RotateCcw, ArrowRight } from "lucide-react";
 import ConsultCta from "@/components/ConsultCta";
 import { QUESTIONS, PROFILE_QUESTIONS, judge, type TypeKey } from "./scoring";
 
+// ページ表示・チェック開始・診断完了・各ボタンのクリックを匿名で記録する（お客様体験はブロックしない・個人情報なし）。
+function trackEvent(eventType: "shindan_view" | "shindan_started" | "shindan_done" | "shindan_cta_consult" | "shindan_cta_mail") {
+  fetch("/api/sotsugyo-event", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ eventType }),
+  }).catch(() => {});
+}
 
 export default function ShindanPage() {
+  useEffect(() => {
+    trackEvent("shindan_view");
+  }, []);
+
   const [checked, setChecked] = useState<Set<TypeKey>>(new Set());
   const [profile, setProfile] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
 
   const toggle = (k: TypeKey) =>
     setChecked((prev) => {
+      if (prev.size === 0) trackEvent("shindan_started");
       const next = new Set(prev);
       if (next.has(k)) next.delete(k);
       else next.add(k);
@@ -101,6 +114,7 @@ export default function ShindanPage() {
             <div className="sticky bottom-4 mt-8">
               <button
                 onClick={() => {
+                  trackEvent("shindan_done");
                   setDone(true);
                   if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
@@ -129,7 +143,10 @@ export default function ShindanPage() {
               <p className="text-sm leading-relaxed text-slate-600">{result.message}</p>
             </section>
 
-            <ConsultCta />
+            <ConsultCta
+              onConsultClick={() => trackEvent("shindan_cta_consult")}
+              onMailClick={() => trackEvent("shindan_cta_mail")}
+            />
 
             <button
               onClick={() => {

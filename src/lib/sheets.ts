@@ -203,7 +203,13 @@ export type SotsugyoEventType =
   | "started"
   | "cta_seminar"
   | "cta_consult"
-  | "cta_detail";
+  | "cta_detail"
+  // /shindan（ライト診断5問・Meta広告の飛び先）の各段階（2026-11-14追加・診断を終えた人数が見えなかったため）
+  | "shindan_view"
+  | "shindan_started"
+  | "shindan_done"
+  | "shindan_cta_consult"
+  | "shindan_cta_mail";
 
 export async function appendSotsugyoEventRow(eventType: SotsugyoEventType) {
   const sheets = getSheetsClient();

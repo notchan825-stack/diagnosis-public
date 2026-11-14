@@ -10,6 +10,11 @@ const VALID_EVENT_TYPES = new Set<SotsugyoEventType>([
   "cta_seminar",
   "cta_consult",
   "cta_detail",
+  "shindan_view",
+  "shindan_started",
+  "shindan_done",
+  "shindan_cta_consult",
+  "shindan_cta_mail",
 ]);
 
 export async function POST(request: Request) {

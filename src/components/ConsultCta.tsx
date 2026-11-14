@@ -8,7 +8,7 @@ export const CONSULT_URL = "https://88auto.biz/andsteady/registp/soudan.htm";
 // ８日間メール（小さな会社の経営８つの心得）の登録先（AutoBiz pid=37・2026-11-03）。
 export const MAIL_URL: string = "https://88auto.biz/andsteady/registp/keiei-kokoroe.htm";
 
-export default function ConsultCta({ onConsultClick }: { onConsultClick?: () => void }) {
+export default function ConsultCta({ onConsultClick, onMailClick }: { onConsultClick?: () => void; onMailClick?: () => void }) {
   return (
     <>
       <section className="mb-6 rounded-2xl bg-slate-800 p-6 text-center text-white">
@@ -44,6 +44,7 @@ export default function ConsultCta({ onConsultClick }: { onConsultClick?: () => 
           href={MAIL_URL}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={onMailClick}
           className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2 text-sm font-bold text-slate-700 hover:bg-slate-50"
         >
           <Mail className="h-4 w-4" />
