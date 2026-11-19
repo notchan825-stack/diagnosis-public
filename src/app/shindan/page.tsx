@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { RotateCcw, ArrowRight } from "lucide-react";
 import ConsultCta from "@/components/ConsultCta";
+import { trackMeta } from "@/lib/metaPixel";
 import { QUESTIONS, PROFILE_QUESTIONS, judge, type TypeKey } from "./scoring";
 
 // ページ表示・チェック開始・診断完了・各ボタンのクリックを匿名で記録する（お客様体験はブロックしない・個人情報なし）。
@@ -115,6 +116,7 @@ export default function ShindanPage() {
               <button
                 onClick={() => {
                   trackEvent("shindan_done");
+                  trackMeta("trackCustom", "DiagnosisComplete", { content_name: "shindan" });
                   setDone(true);
                   if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
@@ -144,8 +146,14 @@ export default function ShindanPage() {
             </section>
 
             <ConsultCta
-              onConsultClick={() => trackEvent("shindan_cta_consult")}
-              onMailClick={() => trackEvent("shindan_cta_mail")}
+              onConsultClick={() => {
+                trackEvent("shindan_cta_consult");
+                trackMeta("trackCustom", "ConsultClick");
+              }}
+              onMailClick={() => {
+                trackEvent("shindan_cta_mail");
+                trackMeta("trackCustom", "MailClick");
+              }}
             />
 
             <button
