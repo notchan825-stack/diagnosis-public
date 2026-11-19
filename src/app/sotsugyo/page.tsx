@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { RotateCcw, ArrowRight, CheckCircle2, Mail } from "lucide-react";
 import { SECTIONS, TOTAL, tier } from "./scoring";
+import { trackMeta } from "@/lib/metaPixel";
 
 // ページ表示・チェック開始・各CTAクリックを匿名で記録する（お客様体験はブロックしない）。
 function trackEvent(eventType: "page_view" | "started" | "cta_seminar" | "cta_consult" | "cta_detail") {
@@ -103,6 +104,7 @@ export default function SotsugyoPage() {
               <button
                 onClick={() => {
                   setDone(true);
+                  trackMeta("trackCustom", "DiagnosisComplete", { content_name: "sotsugyo", result: result.label });
                   if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
                   fetch("/api/sotsugyo-view", {
                     method: "POST",
@@ -201,7 +203,10 @@ export default function SotsugyoPage() {
                   href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => trackEvent("cta_consult")}
+                  onClick={() => {
+                    trackEvent("cta_consult");
+                    trackMeta("trackCustom", "ConsultClick");
+                  }}
                   className="inline-flex items-center gap-2 rounded-full bg-amber-500 px-6 py-3 text-sm font-bold text-slate-900 transition-transform hover:scale-105"
                 >
                   <CheckCircle2 className="h-4 w-4" />
