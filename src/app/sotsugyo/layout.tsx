@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MetaPixel from "@/components/MetaPixel";
 
 export const metadata: Metadata = {
   title: "あなたのお仕事棚卸診断",
@@ -11,5 +12,11 @@ export default function SotsugyoLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  // Metaピクセルは、広告の飛び先の診断ページだけに入れる（メールアドレスがURLに入る /andsteady-check55 などへは入れない）
+  return (
+    <>
+      <MetaPixel />
+      {children}
+    </>
+  );
 }

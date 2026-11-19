@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import MetaPixel from "@/components/MetaPixel";
 
 export const metadata: Metadata = {
   title: "ブランド簡易診断 | BrandCraft",
@@ -15,10 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>
-        <MetaPixel />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

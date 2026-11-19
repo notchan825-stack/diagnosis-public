@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MetaPixel from "@/components/MetaPixel";
 
 export const metadata: Metadata = {
   title: "毎日忙しいのに　利益が残らないのは、なぜ？",
@@ -11,5 +12,11 @@ export default function ShindanLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  // Metaピクセルは、広告の飛び先の診断ページだけに入れる（メールアドレスがURLに入る /andsteady-check55 などへは入れない）
+  return (
+    <>
+      <MetaPixel />
+      {children}
+    </>
+  );
 }
