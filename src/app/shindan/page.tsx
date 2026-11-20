@@ -54,9 +54,7 @@ export default function ShindanPage() {
             <span className="inline-block">利益が残らないのは、なぜ？</span>
           </h1>
           <p className="text-sm leading-relaxed text-slate-500">
-            あてはまる度合いを選んでください
-            <br />
-            （５つ・約１分）
+            ５つの質問に答えると見えてきますよ
           </p>
         </header>
 
