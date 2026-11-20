@@ -23,10 +23,18 @@ export default function ShindanPage() {
   const [scores, setScores] = useState<Partial<Record<TypeKey, Score>>>({});
   const [profile, setProfile] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  // 1問ずつ表示（2026-11-20）：0〜4=質問、5=あわせて教えてください（任意）
+  const [step, setStep] = useState(0);
+  const total = QUESTIONS.length;
 
   const setScore = (k: TypeKey, v: Score) => {
     if (Object.keys(scores).length === 0) trackEvent("shindan_started");
     setScores((prev) => ({ ...prev, [k]: v }));
+  };
+
+  const answer = (k: TypeKey, v: Score) => {
+    setScore(k, v);
+    window.setTimeout(() => setStep((cur) => Math.min(cur + 1, total)), 220);
   };
 
   const result = judge(scores, profile);
@@ -54,35 +62,51 @@ export default function ShindanPage() {
 
         {!done ? (
           <>
-            <section className="mb-6">
-              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                {QUESTIONS.map((q) => (
-                  <div key={q.key} className="border-b border-slate-100 p-4 last:border-b-0">
-                    <p className="mb-3 text-sm leading-relaxed">{q.text}</p>
-                    <div className="grid grid-cols-3 gap-2">
-                      {SCORE_OPTIONS.map((o) => {
-                        const on = scores[q.key] === o.value;
-                        return (
-                          <button
-                            key={o.value}
-                            type="button"
-                            onClick={() => setScore(q.key, o.value)}
-                            className={`rounded-full border px-2 py-1.5 text-xs transition-colors sm:text-sm ${
-                              on
-                                ? "border-amber-600 bg-amber-50 font-bold text-amber-800"
-                                : "border-slate-300 bg-white text-slate-600 hover:bg-slate-50"
-                            }`}
-                          >
-                            {o.label}
-                          </button>
-                        );
-                      })}
-                    </div>
+            {step < total && (
+              <section className="mb-6">
+                <div className="mb-3 flex items-center justify-between text-xs text-slate-500">
+                  <span>
+                    {step + 1} / {total}
+                  </span>
+                  {step > 0 && (
+                    <button type="button" onClick={() => setStep(step - 1)} className="text-slate-500 underline">
+                      ← 前の質問
+                    </button>
+                  )}
+                </div>
+                <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-slate-200">
+                  <div
+                    className="h-full rounded-full bg-amber-600 transition-all"
+                    style={{ width: `${((step + 1) / total) * 100}%` }}
+                  />
+                </div>
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <p className="mb-5 text-base font-bold leading-relaxed">{QUESTIONS[step].text}</p>
+                  <div className="grid gap-2">
+                    {SCORE_OPTIONS.map((o) => {
+                      const on = scores[QUESTIONS[step].key] === o.value;
+                      return (
+                        <button
+                          key={o.value}
+                          type="button"
+                          onClick={() => answer(QUESTIONS[step].key, o.value)}
+                          className={`rounded-full border px-4 py-3 text-sm transition-colors sm:text-base ${
+                            on
+                              ? "border-amber-600 bg-amber-50 font-bold text-amber-800"
+                              : "border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                          }`}
+                        >
+                          {o.label}
+                        </button>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
-            </section>
+                </div>
+              </section>
+            )}
 
+            {step === total && (
+              <>
             <section className="mb-6 rounded-xl border border-slate-200 bg-white p-4">
               <h2 className="mb-3 border-l-4 border-amber-600 pl-3 text-sm font-bold text-slate-700">
                 あわせて教えてください（任意）
@@ -127,6 +151,8 @@ export default function ShindanPage() {
                 <ArrowRight className="h-5 w-5" />
               </button>
             </div>
+              </>
+            )}
           </>
         ) : (
           <>
@@ -189,6 +215,7 @@ export default function ShindanPage() {
               onClick={() => {
                 setScores({});
                 setProfile({});
+                setStep(0);
                 setDone(false);
                 if (typeof window !== "undefined") window.scrollTo({ top: 0 });
               }}
